@@ -2,7 +2,9 @@
 
 The `dist` extension for NetLogo makes it easy to plot frequency distributions and complementary cumulative distribution functions in NetLogo.
 
-The extension is still very raw and hasn't been fully test. **Please don't use in production code**.
+The extension is still very raw and hasn't been fully tested. Please don't use in production code.
+
+Download it from [the Releases page](https://github.com/nicolaspayette/DistExtension/releases).
 
 Requires [NetLogo 6.0-BETA1](http://ccl.northwestern.edu/netlogo/6.0-BETA1/) or later.
 
