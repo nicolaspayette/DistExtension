@@ -5,3 +5,4 @@ target/
 /.cache-main
 bin/
 *.jar
+/dist.zip
