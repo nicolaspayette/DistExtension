@@ -1,12 +1,25 @@
 package nicolaspayette.dist
 
+import scala.Ordering
+import scala.annotation.migration
 import scala.collection.immutable.TreeMap
 import scala.math.log10
 
-import org.nlogo.api._
-import org.nlogo.api.Syntax._
+import org.nlogo.api.Argument
+import org.nlogo.api.Command
+import org.nlogo.api.Context
+import org.nlogo.api.DefaultClassManager
+import org.nlogo.api.Dump
+import org.nlogo.api.ExtensionException
+import org.nlogo.api.PrimitiveManager
+import org.nlogo.api.Reporter
+import org.nlogo.core.I18N
+import org.nlogo.core.LogoList
+import org.nlogo.core.Syntax.BooleanType
+import org.nlogo.core.Syntax.ListType
+import org.nlogo.core.Syntax.commandSyntax
+import org.nlogo.core.Syntax.reporterSyntax
 import org.nlogo.plot.PlotManager
-import org.nlogo.nvm.ExtensionContext
 
 class DistExtension extends DefaultClassManager {
   def load(manager: PrimitiveManager): Unit =
@@ -18,16 +31,16 @@ class DistExtension extends DefaultClassManager {
     } manager.addPrimitive(name, prim)
 }
 
-trait DistPrim extends DefaultReporter {
+trait DistPrim extends Reporter {
 
   type Points = Iterator[(Double, Double)]
 
   override def getSyntax = reporterSyntax(
-    Array(ListType, BooleanType, BooleanType),
-    ListType)
+    right = List(ListType, BooleanType, BooleanType),
+    ret = ListType)
 
   def getNumbers(arg: Argument): Iterator[Double] =
-    arg.getList.collect {
+    arg.getList.iterator.collect {
       case n: java.lang.Number ⇒ n.doubleValue
       case obj ⇒ throw new ExtensionException(
         "Expected a number but got " +
@@ -41,7 +54,7 @@ trait DistPrim extends DefaultReporter {
 
   def logPoints(points: Points, logX: Boolean, logY: Boolean): Iterator[(Double, Double)] =
     for {
-      (x, y) ← points
+      (x, y) <- points
       if !logX || x > 0
       _x = if (logX) log10(x) else x
       if !logY || y > 0
@@ -90,9 +103,9 @@ class Ccdf extends DistPrim {
 
 }
 
-class PlotPoints extends DefaultCommand {
+class PlotPoints extends Command {
 
-  override def getSyntax = commandSyntax(Array(ListType))
+  override def getSyntax = commandSyntax(List(ListType))
 
   def getXY(point: AnyRef): (Double, Double) = {
     try point match {
@@ -102,29 +115,25 @@ class PlotPoints extends DefaultCommand {
     } catch {
       case e: MatchError ⇒ throw new ExtensionException(
         "Expected a list of two numbers but got " +
-          Dump.logoObject(point, true, false) + " instead."
-      )
+          Dump.logoObject(point, true, false) + " instead.")
     }
   }
 
   override def perform(args: Array[Argument], context: Context): Unit = {
 
     val points = args(0).getList
-    val plot = context.asInstanceOf[ExtensionContext]
-      .workspace
+    val plot = context.workspace
       .plotManager.asInstanceOf[PlotManager]
       .currentPlot.getOrElse(
-        throw new ExtensionException(I18N.errors.get("org.nlogo.plot.noPlotSelected"))
-      )
+        throw new ExtensionException(I18N.errors.get("org.nlogo.plot.noPlotSelected")))
     val pen = plot
       .currentPen.getOrElse(
-        throw new ExtensionException("Plot '" + plot.name + "' has no pens!")
-      )
+        throw new ExtensionException("Plot '" + plot.name + "' has no pens!"))
 
     pen.plotListenerReset(true)
     pen.hardReset()
     for {
-      point ← points
+      point <- points
       (x, y) = getXY(point)
     } pen.plot(x, y)
     plot.makeDirty()
