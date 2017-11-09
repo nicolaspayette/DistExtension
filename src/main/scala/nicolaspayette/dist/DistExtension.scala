@@ -1,7 +1,6 @@
 package nicolaspayette.dist
 
 import scala.Ordering
-import scala.annotation.migration
 import scala.collection.immutable.TreeMap
 import scala.math.log10
 
