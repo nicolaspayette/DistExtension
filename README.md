@@ -4,7 +4,7 @@ The extension is still very raw and hasn't been fully tested. Don't use it in pr
 
 Download it from [the Releases page](https://github.com/nicolaspayette/DistExtension/releases).
 
-Requires [NetLogo 6.0-BETA1](http://ccl.northwestern.edu/netlogo/6.0-BETA1/) or later.
+The latest version of the extension should work with [NetLogo 6.0.2](http://ccl.northwestern.edu/netlogo/6.0.2).
 
 ***
 
