@@ -49,7 +49,7 @@ The `dist:plot-points` command could be used with any list of points expressed a
 For example:
 
 ```
-dist:plot-points dist:ccdf [ number-of-citations ] of scientists
+dist:plot-points dist:ccdf [ number-of-citations ] of scientists true true
 ```
 
 Could result in:
